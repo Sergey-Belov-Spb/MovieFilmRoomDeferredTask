@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_allMovies"
+        android:icon="@drawable/ic_list_black_24dp"
+        android:title="Все фильмы"/>
+    <item
+        android:id="@+id/action_favoriteMovies"
+        android:icon="@drawable/ic_favorite_border_black_24dp"
+        android:title="Избранное"/>
+</menu>
