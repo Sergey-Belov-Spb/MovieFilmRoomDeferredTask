@@ -1,4 +1,4 @@
-package com.example.moviefilmroomdeferredtask.data.entity;
+package com.example.moviefilmroomdeferredtask.data.db;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

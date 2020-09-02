@@ -2,8 +2,9 @@ package com.example.moviefilmroomdeferredtask
 
 import android.app.Application
 import com.example.moviefilmroomdeferredtask.data.MovieRepository
-import com.example.moviefilmroomdeferredtask.data.MovieRepositoryBase
-import com.example.moviefilmroomdeferredtask.data.MovieService
+import com.example.moviefilmroomdeferredtask.data.api.NetworkConstants.BASE_URL
+import com.example.moviefilmroomdeferredtask.data.api.Service
+import com.example.moviefilmroomdeferredtask.data.db.MovieRepositoryBase
 import com.example.moviefilmroomdeferredtask.domain.MovieInteractor
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
@@ -13,11 +14,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class App : Application(){
 
-    lateinit var movieService: MovieService
+    lateinit var movieService: Service
     // lateinit var githubReposUpdater: GithubReposUpdater
     lateinit var movieInteractor: MovieInteractor
 
-    var reposRepository = MovieRepository()
+    var movieRepository = MovieRepository()
 
     override fun onCreate() {
         super.onCreate()
@@ -30,7 +31,7 @@ class App : Application(){
     }
 
     private fun initInteractor() {
-        movieInteractor = MovieInteractor(movieService, reposRepository)
+        movieInteractor = MovieInteractor(movieService, movieRepository)
     }
     private fun initRetrofit() {
         val logging = HttpLoggingInterceptor()
@@ -38,14 +39,16 @@ class App : Application(){
 
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(logging)
+            //.addInterceptor(AuthInterceptor())
             .build()
 
         movieService = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(Gson()))
+            //.addCallAdapterFactory(LiveDataCallAdapterFactory())
             .build()
-            .create(MovieService::class.java!!)
+            .create(Service::class.java!!)
 
         ///githubReposUpdater = GithubReposUpdater(githubService)
     }
@@ -58,7 +61,7 @@ class App : Application(){
 
 
     companion object{
-        const val BASE_URL = "https://my-json-server.typicode.com/shustreek/demo/"
+
         //const val BASE_URL = "https://api.github.com/"
 
         var mRepositoryBase : MovieRepositoryBase? = null

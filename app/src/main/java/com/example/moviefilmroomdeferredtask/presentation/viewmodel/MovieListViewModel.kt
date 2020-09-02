@@ -8,10 +8,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.moviefilmroomdeferredtask.App
-import com.example.moviefilmroomdeferredtask.data.entity.Movie
+import com.example.moviefilmroomdeferredtask.data.db.Movie
 import com.example.moviefilmroomdeferredtask.data.entity.MovieItem
 import com.example.moviefilmroomdeferredtask.domain.MovieInteractor
-import com.example.moviefilmroomdeferredtask.presentation.view.MainActivity
 import java.util.*
 
 
@@ -29,12 +28,14 @@ public class MovieListViewModel(application: Application): AndroidViewModel(appl
 
     private val mMovieBase = App.mRepositoryBase
 
-    init {
+    val moviesAll: LiveData<List<Movie>>?
 
+    init {
+        moviesAll = mMovieBase?.getmAllMovie()
     }
 
-    val moviesAll: LiveData<List<Movie>>?
-        get() = allMoviesLiveData //mMovieBase?.getmAllMovie() //allMoviesLiveData
+    /*val moviesAll: LiveData<List<Movie>>?
+        get() = allMoviesLiveData //mMovieBase?.getmAllMovie() //allMoviesLiveData*/
 
     val moviesFavorite: LiveData<List<Movie>>
         get() = allMoviesLiveData //favoriteLiveData

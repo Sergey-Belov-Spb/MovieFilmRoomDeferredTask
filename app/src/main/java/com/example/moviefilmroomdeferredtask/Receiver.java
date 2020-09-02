@@ -19,15 +19,14 @@ public class Receiver extends BroadcastReceiver {
     public static String NOTIFICATION_CHANNEL_ID = "Me channel";
     @Override
     public void onReceive(Context context, Intent intentRx) {
-        String nameMovie = intentRx.getAction();
-        String picMovie = intentRx.getStringExtra("extra");
+        String idMovie = intentRx.getAction();
+
         Log.d("log Receiver", "onReceive");
-        Log.d("log Receiver", "action = " +  nameMovie);
-        Log.d("log Receiver", "extra = " + picMovie);
+        Log.d("log Receiver", "action = " +  idMovie);
 
 
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra("nameMovie", nameMovie);
+        intent.putExtra("idMovie", idMovie);
         //intent.putExtra("picMovie", picMovie);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 

@@ -18,24 +18,26 @@
 
     <ImageView
         android:id="@+id/imageFavoriteAll"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_margin="2dp"
+        android:layout_marginBottom="4dp"
         android:src="@drawable/ic_favorite_border_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.969"
         app:layout_constraintStart_toEndOf="@+id/imageMovieInAll" />
 
     <ImageView
         android:id="@+id/imageSeeLate"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_margin="2dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/ic_watch_later_green_24dp"
         app:layout_constraintBottom_toTopOf="@+id/imageFavoriteAll"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.964"
         app:layout_constraintStart_toEndOf="@+id/imageMovieInAll" />
 
     <TextView
