@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,
     //val movieViewModel : MovieListViewModel? = null;
     override fun onCreate(savedInstanceState: Bundle?) {
         //val Test = intent.getStringExtra("showSeeLate")
-        val idMoveSeeLate = getIntent().getStringExtra("idMovie")
+        val idMoveSeeLate = getIntent().getStringExtra("nameMovie")
 
 
         super.onCreate(savedInstanceState)

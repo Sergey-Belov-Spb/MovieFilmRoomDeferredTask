@@ -11,7 +11,12 @@ import com.example.moviefilmroomdeferredtask.App
 import com.example.moviefilmroomdeferredtask.data.db.Movie
 import com.example.moviefilmroomdeferredtask.data.entity.MovieItem
 import com.example.moviefilmroomdeferredtask.domain.MovieInteractor
+import rx.Observable
+import rx.Subscriber
+import rx.Subscription
+import rx.subjects.BehaviorSubject
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 public class MovieListViewModel(application: Application): AndroidViewModel(application) {
@@ -24,7 +29,11 @@ public class MovieListViewModel(application: Application): AndroidViewModel(appl
 
     private val itemsFavorite = ArrayList<MovieItem>()
 
-    private val githubInteractor = App.instance!!.movieInteractor
+    private val movieInteractor = App.instance!!.movieInteractor
+
+    private lateinit var observableModelsList: BehaviorSubject<ArrayList<MovieItem>>
+    private var subscription: Subscription? = null
+
 
     private val mMovieBase = App.mRepositoryBase
 
@@ -55,8 +64,8 @@ public class MovieListViewModel(application: Application): AndroidViewModel(appl
         edit.putLong("LastTime",timeMsec)
         edit.commit()
     }
-    fun CheckTimeReqNewData() :Boolean {
 
+    fun CheckTimeReqNewData() :Boolean {
         val data = Date();
         val curTime = data.time
         val deltaTimeSec =(curTime - readLastTime())/1000
@@ -71,15 +80,14 @@ public class MovieListViewModel(application: Application): AndroidViewModel(appl
         if (CheckTimeReqNewData() == true) {
             if (activeInternetRequestData == false) {
                 activeInternetRequestData = true
-                githubInteractor.getNewMovies(object : MovieInteractor.GetMoviesCallback {
+                movieInteractor.getNewMovies(object : MovieInteractor.GetMoviesCallback {
+
                     override fun onSuccess(newMovies: List<MovieItem>) {
                         activeInternetRequestData = false
                         mMovieBase?.AddToBase(newMovies)
                         val newBase = mMovieBase?.getmAllMovie2();
                         allMoviesLiveData.postValue(newBase)
-
                         //allMoviesLiveData.postValue(newMovies)
-
                     }
 
                     override fun onError(error: String) {
@@ -125,4 +133,31 @@ public class MovieListViewModel(application: Application): AndroidViewModel(appl
 
     }
 
+    fun resetModelsObservable() {
+        observableModelsList = BehaviorSubject.create()
+
+        //subscription = App.instance.observableRetrofit.subscribe(Subscriber<ArrayList<MovieItem>>(){
+         /*   subscription = App.instance.observableRetrofit.subscribe(Subscriber<ArrayList<Model>>() {
+                @Override
+                onCompleted() {
+                    //do nothing
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    observableModelsList.onError(e);
+                }
+
+                @Override
+                public void onNext(ArrayList<Model> models) {
+                    observableModelsList.onNext(models);
+                }
+            });*/
+    }
+    fun getModelsObservable(): Observable<ArrayList<MovieItem>>  {
+        if (observableModelsList == null) {
+            resetModelsObservable();
+        }
+        return observableModelsList;
+    }
 }

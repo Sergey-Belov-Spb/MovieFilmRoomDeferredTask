@@ -43,6 +43,8 @@ abstract class MovieRoomDatabase extends RoomDatabase {
             }
 
         }
+        MovieDao dao = INSTANCE.movieDao();
+        dao.deleteAll();
         return INSTANCE;
     }
 
@@ -54,8 +56,8 @@ abstract class MovieRoomDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
                 // If you want to start with more words, just add them.
-                MovieDao dao = INSTANCE.movieDao();
-                dao.deleteAll();
+                //MovieDao dao = INSTANCE.movieDao();
+                //dao.deleteAll();
 
                 /*Movie movie = new Movie();
                 movie.id = 1;

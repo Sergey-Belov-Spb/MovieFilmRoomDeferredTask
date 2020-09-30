@@ -38,6 +38,8 @@ class MovieListFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
     private var adapter: MovieAdapter? = null
     private var progressBar: ProgressBar? = null
+    var mainContext:Context? = null
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -53,7 +55,9 @@ class MovieListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initRecycler()
+
+        mainContext=context
+        initRecycler(getContext())
 
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         viewModel = ViewModelProviders.of(activity!!).get(MovieListViewModel::class.java!!)
@@ -87,8 +91,8 @@ class MovieListFragment : Fragment() {
         if (viewModel!!.onGetDataClick() == true)  { progressBar?.visibility = View.VISIBLE}
     }
 
-    private fun initRecycler() {
-        adapter = MovieAdapter(LayoutInflater.from(context), object : MovieAdapter.OnMovieSelectedListener {
+    private fun initRecycler(mainContext: Context?) {
+        adapter = MovieAdapter(LayoutInflater.from(context),mainContext, object : MovieAdapter.OnMovieSelectedListener {
             override fun onRepoSelect(item: Movie, addToFavorite: Boolean, addSeeLate: Boolean) {
                 if ((addToFavorite==false)&&(addSeeLate==false)) { listener?.onMovieSelected(item,false)}
                 else
@@ -144,8 +148,10 @@ class MovieListFragment : Fragment() {
     }
     /*END class RecyclerView.ViewHolder */
     /* class RecyclerView.Adapter */
-    class MovieAdapter(private val inflater: LayoutInflater, private val listener: OnMovieSelectedListener) : RecyclerView.Adapter<MovieViewHolder>() {
+    class MovieAdapter(private val inflater: LayoutInflater,private val context: Context?, private val listener: OnMovieSelectedListener) : RecyclerView.Adapter<MovieViewHolder>() {
         private val items = ArrayList<Movie>()
+        private val mainContext = context
+
 
         fun setItems(repos: List<Movie>,view: View) {
             //items.clear()
@@ -170,7 +176,7 @@ class MovieListFragment : Fragment() {
             holder.itemView.findViewById<ImageView>(R.id.imageSeeLate).setOnClickListener {
                     v -> listener.onRepoSelect(items[position],false,true)
                 //Set Data and time see late
-                /*val c = Calendar.getInstance()
+/*                val c = Calendar.getInstance()
                 val yr = c.get(Calendar.YEAR)
                 val month = c.get(Calendar.MONTH)
                 val day = c.get(Calendar.DAY_OF_MONTH)
@@ -216,7 +222,7 @@ class MovieListFragment : Fragment() {
                             //getActivity()?.supportFragmentManager?.getBackStackEntryAt(2)
                             if (delta>0) {
                                 Toast.makeText(it.context,"Фильм добавлен в спиок ожидания просмотра.",Toast.LENGTH_SHORT).show()
-                                setAlarm(delta,it.context)
+                                setAlarm(delta,mainContext)
                             }else {
                                 Toast.makeText(it.context,"Неправильно задано время просмотра.",Toast.LENGTH_SHORT).show()
                             }
@@ -234,7 +240,6 @@ class MovieListFragment : Fragment() {
 
         private fun createIntent(action: Long,context : Context): Intent =
             Intent(action.toString(), null, context, Receiver::class.java)
-
 
         private fun setAlarm(timeDelayIn_mSec:Long,context : Context) {
             Log.d(MovieSetTimeSeeLate.TAG, "setAlarm")
