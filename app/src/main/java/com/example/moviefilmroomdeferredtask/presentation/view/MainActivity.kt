@@ -17,9 +17,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import com.example.moviefilmroomdeferredtask.R
 import com.example.moviefilmroomdeferredtask.Receiver
-import com.example.moviefilmroomdeferredtask.data.entity.Movie
-import com.example.moviefilmroomdeferredtask.presentation.view.MovieListFavoriteFragment
-import com.example.moviefilmroomdeferredtask.presentation.view.MovieListFragment
+import com.example.moviefilmroomdeferredtask.data.db.Movie
 import com.example.moviefilmroomdeferredtask.presentation.viewmodel.MovieListViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -37,20 +35,20 @@ class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,
     //val movieViewModel : MovieListViewModel? = null;
     override fun onCreate(savedInstanceState: Bundle?) {
         //val Test = intent.getStringExtra("showSeeLate")
-        val nameMoveSeeLate = getIntent().getStringExtra("nameMovie")
-        val picMoveSeeLate = intent.getStringExtra("picMovie")
+        val idMoveSeeLate = getIntent().getStringExtra("nameMovie")
+
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initButtonListener()
 
-        if (nameMoveSeeLate != null)
+        if (idMoveSeeLate != null)
         {
             Log.d(TAG,"showFragmentDetailed ")
             supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.fragmentContainer,MovieDetailedFragment.newInstance(nameMoveSeeLate,picMoveSeeLate),MovieDetailedFragment.TAG)
+                .replace(R.id.fragmentContainer,MovieDetailedFragment.newInstance(idMoveSeeLate),MovieDetailedFragment.TAG)
                 .addToBackStack("Detaled")
                 .commit()
         }
@@ -199,7 +197,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,
     private fun openDetailedFragment(movieItem: Movie) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragmentContainer,MovieDetailedFragment.newInstance(movieItem.title,movieItem.picUrl),MovieDetailedFragment.TAG)
+            .replace(R.id.fragmentContainer,MovieDetailedFragment.newInstance(movieItem.id.toString()),MovieDetailedFragment.TAG)
             .addToBackStack("Detaled")
             .commit()
     }
@@ -207,7 +205,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,
     private fun openSetTimeSeeLateFragment(movieItem: Movie) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragmentContainer,MovieSetTimeSeeLate.newInstance(movieItem.title,movieItem.picUrl) ,MovieSetTimeSeeLate.TAG)
+            .replace(R.id.fragmentContainer,MovieSetTimeSeeLate.newInstance(movieItem.id) ,MovieSetTimeSeeLate.TAG)
             .addToBackStack("SetTimeSeeLate")
             .commit()
     }

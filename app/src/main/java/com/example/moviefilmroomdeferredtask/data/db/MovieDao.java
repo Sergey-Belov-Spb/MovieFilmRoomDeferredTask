@@ -1,4 +1,4 @@
-package com.example.moviefilmroomdeferredtask.data;
+package com.example.moviefilmroomdeferredtask.data.db;
 
 
 import androidx.lifecycle.LiveData;
@@ -7,8 +7,6 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
-
-import com.example.moviefilmroomdeferredtask.data.entity.Movie;
 
 import java.util.List;
 

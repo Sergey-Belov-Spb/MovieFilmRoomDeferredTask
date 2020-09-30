@@ -1,9 +1,9 @@
-package com.example.moviefilmroomdeferredtask.data
+package com.example.moviefilmroomdeferredtask.data.db
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
-import com.example.moviefilmroomdeferredtask.data.entity.Movie
+
 import com.example.moviefilmroomdeferredtask.data.entity.MovieItem
 
 

@@ -1,12 +1,18 @@
 package com.example.moviefilmroomdeferredtask.presentation.view
 
+import android.app.AlarmManager
+import android.app.DatePickerDialog
+import android.app.PendingIntent
+import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.isInvisible
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -14,13 +20,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.example.moviefilmroomdeferredtask.R
-import com.example.moviefilmroomdeferredtask.data.entity.MovieItem
 import com.example.moviefilmroomdeferredtask.presentation.viewmodel.MovieListViewModel
-import java.util.ArrayList
 import com.bumptech.glide.Glide
-import com.example.moviefilmroomdeferredtask.data.entity.Movie
+import com.example.moviefilmroomdeferredtask.Receiver
+import com.example.moviefilmroomdeferredtask.data.db.Movie
 import com.google.android.material.snackbar.Snackbar
-
+import java.util.*
 
 
 class MovieListFragment : Fragment() {
@@ -33,6 +38,8 @@ class MovieListFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
     private var adapter: MovieAdapter? = null
     private var progressBar: ProgressBar? = null
+    var mainContext:Context? = null
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -48,7 +55,9 @@ class MovieListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initRecycler()
+
+        mainContext=context
+        initRecycler(getContext())
 
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         viewModel = ViewModelProviders.of(activity!!).get(MovieListViewModel::class.java!!)
@@ -82,8 +91,8 @@ class MovieListFragment : Fragment() {
         if (viewModel!!.onGetDataClick() == true)  { progressBar?.visibility = View.VISIBLE}
     }
 
-    private fun initRecycler() {
-        adapter = MovieAdapter(LayoutInflater.from(context), object : MovieAdapter.OnRepoSelectedListener {
+    private fun initRecycler(mainContext: Context?) {
+        adapter = MovieAdapter(LayoutInflater.from(context),mainContext, object : MovieAdapter.OnMovieSelectedListener {
             override fun onRepoSelect(item: Movie, addToFavorite: Boolean, addSeeLate: Boolean) {
                 if ((addToFavorite==false)&&(addSeeLate==false)) { listener?.onMovieSelected(item,false)}
                 else
@@ -139,8 +148,10 @@ class MovieListFragment : Fragment() {
     }
     /*END class RecyclerView.ViewHolder */
     /* class RecyclerView.Adapter */
-    class MovieAdapter(private val inflater: LayoutInflater, private val listener: OnRepoSelectedListener) : RecyclerView.Adapter<MovieViewHolder>() {
+    class MovieAdapter(private val inflater: LayoutInflater,private val context: Context?, private val listener: OnMovieSelectedListener) : RecyclerView.Adapter<MovieViewHolder>() {
         private val items = ArrayList<Movie>()
+        private val mainContext = context
+
 
         fun setItems(repos: List<Movie>,view: View) {
             //items.clear()
@@ -164,14 +175,89 @@ class MovieListFragment : Fragment() {
             }
             holder.itemView.findViewById<ImageView>(R.id.imageSeeLate).setOnClickListener {
                     v -> listener.onRepoSelect(items[position],false,true)
+                //Set Data and time see late
+/*                val c = Calendar.getInstance()
+                val yr = c.get(Calendar.YEAR)
+                val month = c.get(Calendar.MONTH)
+                val day = c.get(Calendar.DAY_OF_MONTH)
+                val display = DatePickerDialog(it.context, DatePickerDialog.OnDateSetListener {
+                        view, year, monthOfYear, dayOfMonth ->
+                    //dateColumn.text = ("$dayOfMonth $monthInput, $year")
+                    Log.d(MovieSetTimeSeeLate.TAG, "Date :"+ year+" "+ (monthOfYear+1) + " " + dayOfMonth)
+                    val newYear = year
+                    val newMonth =  monthOfYear+1
+                    val newDay = day
+
+                    Log.d(MovieSetTimeSeeLate.TAG, "Set SelectTime ")
+                    val hh=c.get(Calendar.HOUR_OF_DAY)
+                    val mm=c.get(Calendar.MINUTE)
+                    val timePickerDialog: TimePickerDialog = TimePickerDialog(it.context,
+                        TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                            //view.findViewById<Button>(R.id.textSetTime).setText( ""+hourOfDay + ":" + minute);
+                            Log.d(MovieSetTimeSeeLate.TAG, "Time >"+hourOfDay + ":" + minute)
+
+                            val newMin =minute
+                            val newHour = hourOfDay
+
+                            Log.d(MovieSetTimeSeeLate.TAG, "Set Alarm Time ")
+                            val curYard = c.get(Calendar.YEAR)
+                            val curMonth = c.get(Calendar.MONTH)+1
+                            val curDay = c.get(Calendar.DAY_OF_MONTH)
+                            val curHour = c.get(Calendar.HOUR_OF_DAY)
+                            val curMin =c.get(Calendar.MINUTE)
+                            val curData = Date(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH),c.get(Calendar.HOUR_OF_DAY),c.get(Calendar.MINUTE)).time
+                            val waitData = Date(
+                                newYear,
+                                newMonth,
+                                newDay,
+                                newHour,
+                                newMin
+                            ).time
+
+                            val delta = (waitData-curData)
+                            Log.d(MovieSetTimeSeeLate.TAG, "Time cur> "+curData + " Time wait> " + waitData + "delta = " + delta)
+
+                            Log.d(MovieSetTimeSeeLate.TAG, "SetTime min -> "+ delta/1000/60)
+                            //getActivity()?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+                            //getActivity()?.supportFragmentManager?.getBackStackEntryAt(2)
+                            if (delta>0) {
+                                Toast.makeText(it.context,"Фильм добавлен в спиок ожидания просмотра.",Toast.LENGTH_SHORT).show()
+                                setAlarm(delta,mainContext)
+                            }else {
+                                Toast.makeText(it.context,"Неправильно задано время просмотра.",Toast.LENGTH_SHORT).show()
+                            }
+
+                        },hh,mm,true)
+                    timePickerDialog.show()
+
+                }, yr, month, day)
+                display.datePicker.minDate = System.currentTimeMillis()
+                display.show()*/
+
             }
+
+        }
+
+        private fun createIntent(action: Long,context : Context): Intent =
+            Intent(action.toString(), null, context, Receiver::class.java)
+
+        private fun setAlarm(timeDelayIn_mSec:Long,context : Context) {
+            Log.d(MovieSetTimeSeeLate.TAG, "setAlarm")
+
+            val intent = createIntent(MovieSetTimeSeeLate.idMovie as Long,context)
+            val pIntentOnce = PendingIntent.getBroadcast(context, 0, intent, 0)
+            val am = ContextCompat.getSystemService(context, AlarmManager::class.java)
+            am?.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeDelayIn_mSec, pIntentOnce)
+
+            Log.d(MovieSetTimeSeeLate.TAG, "SetTime мин "+ 1_000)
+            Log.d(MovieSetTimeSeeLate.TAG, "SetTime My "+ timeDelayIn_mSec)
         }
 
         override fun getItemCount(): Int {
             return items.size
         }
 
-        interface OnRepoSelectedListener {
+        interface OnMovieSelectedListener {
             fun onRepoSelect(item: Movie, addToFavorite: Boolean, addSeeLate: Boolean)
         }
     }

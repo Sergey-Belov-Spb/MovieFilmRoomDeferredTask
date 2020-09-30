@@ -1,4 +1,4 @@
-package com.example.moviefilmroomdeferredtask.data;
+package com.example.moviefilmroomdeferredtask.data.db;
 
 
 import android.content.Context;
@@ -9,8 +9,6 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-
-import com.example.moviefilmroomdeferredtask.data.entity.Movie;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,6 +43,8 @@ abstract class MovieRoomDatabase extends RoomDatabase {
             }
 
         }
+        MovieDao dao = INSTANCE.movieDao();
+        dao.deleteAll();
         return INSTANCE;
     }
 
@@ -56,8 +56,8 @@ abstract class MovieRoomDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
                 // If you want to start with more words, just add them.
-                MovieDao dao = INSTANCE.movieDao();
-                dao.deleteAll();
+                //MovieDao dao = INSTANCE.movieDao();
+                //dao.deleteAll();
 
                 /*Movie movie = new Movie();
                 movie.id = 1;

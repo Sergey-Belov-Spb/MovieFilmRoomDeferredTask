@@ -32,17 +32,14 @@ class MovieSetTimeSeeLate : Fragment() {
         var alarmYeard : Int = 0
         var alarmMonth : Int = 0
         var alarmDay: Int = 0
-        var nameFilm : String? = null
-        var picFilm : String? = null
+        var idMovie : Long? = null
 
-        const val EXTRA_NAME = "EXTRA_NAME"
-        const val EXTRA_INDEXPIC = "EXTRA_INDEXPIC"
+        const val EXTRA_ID_MOVIE = "EXTRA_ID_MOVIE"
 
-        fun newInstance(name: String,image: String ): MovieSetTimeSeeLate{
+        fun newInstance(id: Long): MovieSetTimeSeeLate{
             val fragment = MovieSetTimeSeeLate()
             val bundle = Bundle()
-            bundle.putString(EXTRA_NAME, name)
-            bundle.putString(EXTRA_INDEXPIC, image)
+            bundle.putLong(EXTRA_ID_MOVIE, id)
             fragment.arguments = bundle
             return fragment
         }
@@ -61,8 +58,7 @@ class MovieSetTimeSeeLate : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        nameFilm = arguments?.getString(EXTRA_NAME,"Нет имени")
-        picFilm = arguments?.getString(EXTRA_INDEXPIC," ")
+        idMovie = arguments?.getLong(EXTRA_ID_MOVIE,0)
 
         currentDateTime=view.findViewById<TextView>(R.id.textSetDate)
 
@@ -131,14 +127,14 @@ class MovieSetTimeSeeLate : Fragment() {
             }
         }
     }
-    private fun createIntent(action: String, extra: String): Intent =
-        Intent(action, null, context, Receiver::class.java)
-            .putExtra("extra", extra)
+    private fun createIntent(idMovie: Long): Intent =
+        Intent(idMovie.toString(), null, context, Receiver::class.java)
+
 
     private fun setAlarm(timeDelayIn_mSec:Long) {
         Log.d(TAG, "setAlarm")
 
-        val intent = createIntent(nameFilm as String, picFilm as String)
+        val intent = createIntent(idMovie as Long)
         val pIntentOnce = PendingIntent.getBroadcast(requireContext(), 0, intent, 0)
         val am = getSystemService(requireContext(), AlarmManager::class.java)
         am?.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeDelayIn_mSec, pIntentOnce)
