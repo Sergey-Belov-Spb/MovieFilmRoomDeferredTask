@@ -24,6 +24,7 @@ import com.example.moviefilmroomdeferredtask.presentation.viewmodel.MovieListVie
 import com.bumptech.glide.Glide
 import com.example.moviefilmroomdeferredtask.Receiver
 import com.example.moviefilmroomdeferredtask.data.db.Movie
+import com.example.moviefilmroomdeferredtask.presentation.viewmodel.Paid
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
@@ -133,6 +134,7 @@ class MovieListFragment : Fragment() {
 
         fun bind(item: Movie) {
             nameMovie.text = item.title
+            if (Paid().getPaid()==0) picFavorite.visibility= View.INVISIBLE
             if (item.favorite== true) {picFavorite.setImageResource(R.drawable.ic_favorite_black_24dp)}
             else {picFavorite.setImageResource(R.drawable.ic_favorite_border_black_24dp)}
 

@@ -8,8 +8,8 @@ import rx.Observable
 
 interface Service {
     //@GET("popular?page=1")
-   //@GET("films")
-    @GET("popular?page=2&api_key=9a1a4d8d07b89f0c57458dbaf6d58a99")
+   @GET("films")
+    //@GET("popular?page=2&api_key=9a1a4d8d07b89f0c57458dbaf6d58a99")
     fun getListMovie(): Call<List<MovieItem>>
 
     @GET("films")

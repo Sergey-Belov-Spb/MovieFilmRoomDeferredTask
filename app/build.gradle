@@ -16,6 +16,19 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    flavorDimensions "version"
+    productFlavors {
+        free {
+            applicationId "com.example.free"
+        }
+        paid {
+            applicationId "com.example.paid"
+        }
+
+    }
+
+
+
     buildTypes {
         release {
             minifyEnabled false
